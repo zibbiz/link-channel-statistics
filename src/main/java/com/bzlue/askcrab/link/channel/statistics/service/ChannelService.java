@@ -26,6 +26,11 @@ import com.bzlue.askcrab.link.channel.statistics.dao.ActivityRepository;
 import com.bzlue.askcrab.link.channel.statistics.dao.ChannelRepository;
 import com.bzlue.askcrab.link.channel.statistics.model.Channel;
 
+/**
+ * 渠道管理服务
+ *
+ * @author zhidh (mailto:zhitomatobean@163.com)
+ */
 @RestController
 @RequestMapping("/channel")
 public class ChannelService {

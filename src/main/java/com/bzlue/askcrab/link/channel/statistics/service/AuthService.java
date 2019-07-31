@@ -23,6 +23,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+/**
+ * 用户认证服务
+ *
+ * @author zhidh (mailto:zhitomatobean@163.com)
+ */
 @RestController
 @RequestMapping("/auth")
 public class AuthService {

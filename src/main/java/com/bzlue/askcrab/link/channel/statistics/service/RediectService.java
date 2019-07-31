@@ -32,6 +32,12 @@ import com.bzlue.askcrab.link.channel.statistics.dao.ChannelRepository;
 import com.bzlue.askcrab.link.channel.statistics.model.Activity;
 import com.bzlue.askcrab.link.channel.statistics.model.Channel;
 
+
+/**
+ * 跳转处理服务
+ *
+ * @author zhidh (mailto:zhitomatobean@163.com)
+ */
 @RestController
 @RequestMapping("/rediect")
 public class RediectService {

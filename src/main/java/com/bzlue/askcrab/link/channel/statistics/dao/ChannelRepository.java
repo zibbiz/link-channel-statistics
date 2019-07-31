@@ -21,6 +21,11 @@ import org.springframework.stereotype.Component;
 
 import com.bzlue.askcrab.link.channel.statistics.model.Channel;
 
+/**
+ * 渠道数据库操作
+ *
+ * @author zhidh (mailto:zhitomatobean@163.com)
+ */
 @Component
 public interface ChannelRepository extends JpaRepository<Channel, Long>{
 	

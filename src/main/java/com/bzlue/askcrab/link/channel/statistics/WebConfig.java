@@ -45,7 +45,6 @@ public class WebConfig implements WebMvcConfigurer {
 
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
-		// TODO Auto-generated method stub
 		// 配置拦截器
 		registry.addInterceptor(loginInterceptor).addPathPatterns("/**"). // 配置所有页面拦截
 				excludePathPatterns("/login").excludePathPatterns("/auth/login"); // 排除登录调用接口

@@ -30,6 +30,11 @@ import com.bzlue.askcrab.link.channel.statistics.dao.ChannelRepository;
 import com.bzlue.askcrab.link.channel.statistics.model.Activity;
 import com.bzlue.askcrab.link.channel.statistics.model.Channel;
 
+/**
+ * 活动维护服务
+ *
+ * @author zhidh (mailto:zhitomatobean@163.com)
+ */
 @RestController
 @RequestMapping("/activity")
 public class ActivityService {
@@ -55,10 +60,16 @@ public class ActivityService {
 		return list;
 	}
 
+	/**
+	 * 查询活动下的所有渠道
+	 * @param activityId
+	 * @return
+	 */
 	@GetMapping("/{activityId}")
 	public List<Channel> getChannelsByActivity(@PathVariable String activityId) {
 		List<Channel> channelList = channelRepository.findChannelsByActivityId(activityId);
 		for (Channel tempChannel : channelList) {
+			//获取各渠道的浏览次数
 			String channelCode = tempChannel.getChannelCode();
 			String total = redistemp.get(channelCode);
 			tempChannel.setTotal(Integer.parseInt(total == null ? "0" : total));
