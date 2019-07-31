@@ -1,0 +1,20 @@
+spring:
+  thymeleaf:
+    prefix: classpath:/statics/
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    password: gdrcugmf
+  datasource: 
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/operation?characterEncoding=UTF-8&serverTimezone=UTC&useSSL=false
+    username: root
+    password: root
+  jpa: 
+    hibernate: 
+      #更新或者创建数据表结构
+      ddl-auto: update
+      #控制台显示SQL
+      show-sql: true
+operation:
+  domain-url: http://op.bzlue.com:8080

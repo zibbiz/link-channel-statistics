@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <!-- import CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+</head>
+
+<body>
+  <div id="app">
+    <template>
+      <el-row>
+        <el-button type="primary" @click="toEditActivity={};openAddActDialog = true">新增活动</el-button>
+      </el-row>
+      <el-table :data="activityData" style="width: 100%;height:300" stripe v-loading="loading">
+        <el-table-column type="index" label="序号" align="center"> </el-table-column>
+        <el-table-column prop="activityName" label="活动名称" align="center"> </el-table-column>
+        <el-table-column prop="baseUrl" label="活动链接"> </el-table-column>
+        
+        <el-table-column prop="remark" label="备注"> </el-table-column>
+        <el-table-column prop="createTime" label="创建时间" value-format="yyyy-MM-dd HH:mm:ss"> </el-table-column>
+        <el-table-column label="操作">
+          <template slot-scope="scope">
+            <el-button size="mini" type="primary" @click="manageChannel(scope.row)">管理渠道</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </template>
+
+    <template>
+      <el-dialog title="活动链接渠道" :visible.sync="openRelatedChannelDialog" width="75%">
+          <el-row>
+              <el-button type="primary" @click="toEditChannel={};openAddChannelDialog = true">新增渠道</el-button>
+            </el-row>
+        <el-table :data="relatedChannels" style="width: 100%;" height="300" v-loading="loading">
+          <el-table-column type="index" label="序号" width="100" align="center"> </el-table-column>
+          <el-table-column prop="channelName" label="渠道名称" align="center"> </el-table-column>
+          <el-table-column prop="url" label="渠道链接" width="300" > </el-table-column>
+          <el-table-column prop="total" label="跳转总数" align="center" width="50"> </el-table-column>
+          <el-table-column prop="remark" label="备注"> </el-table-column>
+          <el-table-column label="操作">
+            <template slot-scope="scope">
+              <el-button size="mini" type="primary" class="tag-read" @click="doCopy(scope.row)">复制链接</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="openRelatedChannelDialog = false">关闭</el-button>
+        </div>
+      </el-dialog>
+    </template>
+    <!-- 新增活动Dialog -->
+    <template>
+      <el-dialog title="新增/修改活动" :visible.sync="openAddActDialog">
+        <el-form :model="toEditActivity">
+          <el-form-item label="活动名称">
+            <el-input v-model="toEditActivity.activityName" autocomplete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="活动链接">
+            <el-input v-model="toEditActivity.baseUrl" autocomplete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="备注">
+            <el-input v-model="toEditActivity.remark" autocomplete="off"></el-input>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="openAddActDialog = false">取 消</el-button>
+          <el-button type="primary" @click="submitAddAct" v-loading="loading">提交</el-button>
+        </div>
+      </el-dialog>
+    </template>
+
+    <!-- 新增渠道Dialog -->
+    <template>
+      <el-dialog title="新增/修改渠道" :visible.sync="openAddChannelDialog">
+        <el-form :model="toEditChannel">
+          <el-form-item label="渠道名称">
+            <el-input v-model="toEditChannel.channelName" autocomplete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="备注">
+            <el-input v-model="toEditChannel.remark" autocomplete="off"></el-input>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="openAddChannelDialog = false">取 消</el-button>
+          <el-button type="primary" @click="submitAddChannel" v-loading="loading">提交</el-button>
+        </div>
+      </el-dialog>
+    </template>
+  </div>
+</body>
+<!-- import Vue before Element -->
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<!-- import JavaScript -->
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://cdn.bootcss.com/clipboard.js/2.0.4/clipboard.js"></script>
+<script>
+  new Vue({
+    el: '#app',
+    data: function () {
+      return {
+        loading: false,
+        activityData: [],
+        relatedChannels: [],
+        currentActivityId: "",
+        openRelatedChannelDialog: false,
+        openAddActDialog: false,
+        toEditActivity: {},
+        openAddChannelDialog:false,
+        toEditChannel:{}
+
+      }
+    },
+    //页面记载完成后，出发
+    mounted: function () {
+      this.queryActivities();
+    },
+    methods: {
+      doCopy(channel){
+        var that = this;
+        //检测是否兼容
+        var copy = ClipboardJS.isSupported()
+          // const btnCopy = new Clipboard('btn');
+          let clipboard = new ClipboardJS('.tag-read',{
+            text: function() {
+                return channel.url;
+            }
+        });
+          clipboard.on('success', function (e) {
+            that.$message({ message: '复制成功', type: 'success' });
+            // 释放内存
+            clipboard.destroy()
+          });
+          clipboard.on('error', function (e) {
+            that.$message({ message: '复制失败', type: 'danger' });
+          });
+      },
+      manageChannel(activity) {
+        this.openRelatedChannelDialog = true;
+        this.currentActivityId = activity.id;
+        this.queryRelatedChannels();
+      },
+      queryActivities() {
+        var that = this;
+        that.loading = true;
+        that.getReq('/activity', function (resp) {
+          that.loading = false;
+          if (resp.status == "200") {
+            var result = resp.data;
+            if (result) {
+              that.activityData = result;
+            } else {
+              that.$message("出错啦");
+            }
+          }
+
+        }, function (resp) {
+          that.$message("出错啦");
+          that.loading = false;
+        })
+      },
+      submitAddAct() {
+        var that = this;
+        that.loading = true;
+        console.log(that.toEditActivity);
+        var data = that.toEditActivity;
+        that.postReq('/activity', data, function (resp) {
+          that.loading = false;
+          if (resp.status == "200") {
+            that.$message({ message: '添加成功', type: 'success' });
+            that.queryActivities();
+          }
+
+        }, function (resp) {
+          that.$message("出错啦");
+          that.loading = false;
+        });
+        that.openAddActDialog = false;
+      },
+      submitAddChannel(){
+        var that = this;
+        that.loading = true;
+        var data = that.toEditChannel;
+        data.activityId = that.currentActivityId;
+        that.postReq('/channel', data, function (resp) {
+          that.loading = false;
+          if (resp.status == "200") {
+            that.$message({ message: '添加成功', type: 'success' });
+            that.queryRelatedChannels();
+          }
+
+        }, function (resp) {
+          that.$message("出错啦");
+          that.loading = false;
+        });
+        that.openAddChannelDialog = false;
+      },
+      queryRelatedChannels() {
+        var that = this;
+        that.loading = true;
+        that.getReq('/activity/' + that.currentActivityId, function (resp) {
+          that.loading = false;
+          if (resp.status == "200") {
+            var result = resp.data;
+            if (result) {
+              that.relatedChannels = result;
+            } else {
+              that.$message("出错啦");
+            }
+          }
+
+        }, function (resp) {
+          that.$message("出错啦");
+          that.loading = false;
+        })
+      },
+      postReq(url, data, successCallback, failCallBack) {
+        this.commonReq('post', url, data, successCallback, failCallBack)
+      },
+      getReq(url, successCallback, failCallBack) {
+        this.commonReq('get', url, {}, successCallback, failCallBack)
+      },
+
+      //公共请求处理组件
+      commonReq(method, url, data, successCallback, failCallBack) {
+        var that = this;
+        axios({
+          url: url,
+          method: method,
+          data: data
+        }).then(function (resp) {
+          successCallback(resp)
+        }).catch(resp => {
+          that.$message({ message: '发生未知错误，请联系管理员', type: 'danger' });
+          failCallBack(resp);
+        });
+      }
+    },
+    watch: {
+      //监控tab页切换
+      'activeName': function (newVal, oldVal) {
+        if (newVal == "emp") {
+          this.queryAllEmployee();
+        } else if (newVal == "dept") {
+          this.queryAllDept();
+        } else {
+          this.queryAllProject();
+        }
+      },
+    }
+  })
+</script>
+
+</html>
