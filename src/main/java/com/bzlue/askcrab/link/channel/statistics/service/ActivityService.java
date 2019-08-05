@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.bzlue.askcrab.link.channel.statistics.IConstans;
 import com.bzlue.askcrab.link.channel.statistics.RedisTemplateService;
 import com.bzlue.askcrab.link.channel.statistics.dao.ActivityRepository;
 import com.bzlue.askcrab.link.channel.statistics.dao.ChannelRepository;
@@ -71,7 +72,7 @@ public class ActivityService {
 		for (Channel tempChannel : channelList) {
 			//获取各渠道的浏览次数
 			String channelCode = tempChannel.getChannelCode();
-			String total = redistemp.get(channelCode);
+			String total = redistemp.get(channelCode+IConstans.CHANNEL_CACHE_COUNT_KEY);
 			tempChannel.setTotal(Integer.parseInt(total == null ? "0" : total));
 		}
 		return channelList;
