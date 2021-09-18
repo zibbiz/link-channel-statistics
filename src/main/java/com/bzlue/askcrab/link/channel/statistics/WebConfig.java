@@ -22,7 +22,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
  * 
- * TODO 此处填写 class 信息
  *
  * @author zhidh (mailto:zhidh@primeton.com)
  */
