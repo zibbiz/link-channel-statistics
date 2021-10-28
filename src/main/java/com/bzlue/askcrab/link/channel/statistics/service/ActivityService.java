@@ -1,15 +1,3 @@
-/*******************************************************************************
- * $Header$
- * $Revision$
- * $Date$
- *
- *==============================================================================
- *
- * Copyright (c) 2016-2026 Primeton Technologies, Ltd.
- * All rights reserved.
- * 
- * Created on 2019年6月21日
- *******************************************************************************/
 
 package com.bzlue.askcrab.link.channel.statistics.service;
 
@@ -54,15 +42,16 @@ public class ActivityService {
 		activity.setCreateTime(new Date());
 		activityDao.save(activity);
 	}
-	
+
 	@GetMapping
 	public List<Activity> findAllActivity() {
-		List<Activity> list= activityDao.findAll();
+		List<Activity> list = activityDao.findAll();
 		return list;
 	}
 
 	/**
 	 * 查询活动下的所有渠道
+	 * 
 	 * @param activityId
 	 * @return
 	 */
@@ -70,9 +59,9 @@ public class ActivityService {
 	public List<Channel> getChannelsByActivity(@PathVariable String activityId) {
 		List<Channel> channelList = channelRepository.findChannelsByActivityId(activityId);
 		for (Channel tempChannel : channelList) {
-			//获取各渠道的浏览次数
+			// 获取各渠道的浏览次数
 			String channelCode = tempChannel.getChannelCode();
-			String total = redistemp.get(channelCode+IConstans.CHANNEL_CACHE_COUNT_KEY);
+			String total = redistemp.get(channelCode + IConstans.CHANNEL_CACHE_COUNT_KEY);
 			tempChannel.setTotal(Integer.parseInt(total == null ? "0" : total));
 		}
 		return channelList;

@@ -1,17 +1,3 @@
-/*******************************************************************************
- * $Header$
- * $Revision$
- * $Date$
- *
- *==============================================================================
- *
- * Copyright (c) 2016-2026 Primeton Technologies, Ltd.
- * All rights reserved.
- * 
- * Created on 2019年7月26日
- *******************************************************************************/
-
-
 package com.bzlue.askcrab.link.channel.statistics.service;
 
 import java.util.HashMap;
