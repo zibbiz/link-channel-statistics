@@ -48,3 +48,5 @@ hs_err_pid*
 /nbdist/
 /.nb-gradle/
 .vscode/settings.json
+
+.DS_Store
